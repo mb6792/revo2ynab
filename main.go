@@ -1,4 +1,4 @@
-package main
+package revo2ynab
 
 import (
 	"fmt"
