@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 )
 
 type RevoEntry struct {
@@ -30,7 +31,7 @@ func main() {
 		log.Fatal(error)
 	}
 
-	error = write(entries, "ynab.csv")
+	error = write(entries, targetName(input))
 	if error != nil {
 		log.Fatal(error)
 	}
@@ -87,4 +88,8 @@ func write(entries []RevoEntry, name string) error {
 	}
 
 	return nil
+}
+
+func targetName(source string) string {
+	return strings.Replace(source, ".csv", "", -1) + "-ynab.csv"
 }
