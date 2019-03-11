@@ -28,11 +28,14 @@ func main() {
 	fmt.Println(input)
 
 	file, _ := os.Open(input)
+	defer file.Close()
+
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.LazyQuotes = true
 	reader.Comma = ';'
 
 	var entries []RevoEntry
+	reader.Read()
 	for {
 		line, error := reader.Read()
 
@@ -51,4 +54,20 @@ func main() {
 	}
 	fmt.Println(entries)
 
+	target, _ := os.Create("ynab.csv")
+	defer target.Close()
+
+	writer := csv.NewWriter(target)
+	defer writer.Flush()
+	for _, record := range entries {
+		error := writer.Write([]string{
+			record.Date,
+			record.Reference,
+			record.PaidOut,
+		})
+
+		if error != nil {
+			log.Fatal(error)
+		}
+	}
 }
