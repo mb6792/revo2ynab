@@ -25,8 +25,20 @@ func main() {
 
 	input := args[0]
 
-	fmt.Println(input)
+	entries, error := parse(input)
+	if error != nil {
+		log.Fatal(error)
+	}
 
+	error = write(entries, "ynab.csv")
+	if error != nil {
+		log.Fatal(error)
+	}
+
+	fmt.Println("Done!")
+}
+
+func parse(input string) ([]RevoEntry, error) {
 	file, _ := os.Open(input)
 	defer file.Close()
 
@@ -42,7 +54,7 @@ func main() {
 		if error == io.EOF {
 			break
 		} else if error != nil {
-			log.Fatal(error)
+			return nil, error
 		}
 
 		entries = append(entries, RevoEntry{
@@ -52,9 +64,12 @@ func main() {
 			Category:  line[7],
 		})
 	}
-	fmt.Println(entries)
 
-	target, _ := os.Create("ynab.csv")
+	return entries, nil
+}
+
+func write(entries []RevoEntry, name string) error {
+	target, _ := os.Create(name)
 	defer target.Close()
 
 	writer := csv.NewWriter(target)
@@ -67,7 +82,9 @@ func main() {
 		})
 
 		if error != nil {
-			log.Fatal(error)
+			return error
 		}
 	}
+
+	return nil
 }
