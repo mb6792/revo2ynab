@@ -82,6 +82,15 @@ func write(entries []RevoEntry, name string) error {
 	writer := csv.NewWriter(target)
 	defer writer.Flush()
 
+	writer.Write([]string{
+		"Date",
+		"Payee",
+		"Category",
+		"Memo",
+		"Outflow",
+		"Inflow",
+	})
+
 	for _, record := range entries {
 		date, _ := time.Parse("January 2", record.Date)
 		dateWithYear := time.Date(now.Year(), date.Month(), date.Day(), 0, 0, 0, 0, location)
