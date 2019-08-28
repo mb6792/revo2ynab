@@ -61,7 +61,7 @@ func parse(input string) ([]RevoEntry, error) {
 		}
 
 		entries = append(entries, RevoEntry{
-			Date:      line[0],
+			Date:      strings.TrimSpace(line[0]),
 			Reference: line[1],
 			PaidOut:   line[2],
 			PaidIn:    line[3],
@@ -76,7 +76,6 @@ func write(entries []RevoEntry, name string) error {
 	target, _ := os.Create(name)
 	defer target.Close()
 
-	now := time.Now()
 	location, _ := time.LoadLocation("UTC")
 
 	writer := csv.NewWriter(target)
@@ -92,8 +91,8 @@ func write(entries []RevoEntry, name string) error {
 	})
 
 	for _, record := range entries {
-		date, _ := time.Parse("January 2", record.Date)
-		dateWithYear := time.Date(now.Year(), date.Month(), date.Day(), 0, 0, 0, 0, location)
+		date, _ := time.Parse("Jan 2, 2006", record.Date)
+		dateWithYear := time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, location)
 		dateString := dateWithYear.Format("06/01/02")
 
 		error := writer.Write([]string{
