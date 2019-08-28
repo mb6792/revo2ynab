@@ -93,7 +93,7 @@ func write(entries []RevoEntry, name string) error {
 	for _, record := range entries {
 		date, _ := time.Parse("Jan 2, 2006", record.Date)
 		dateWithYear := time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, location)
-		dateString := dateWithYear.Format("06/01/02")
+		dateString := dateWithYear.Format("02/01/2006")
 
 		error := writer.Write([]string{
 			dateString,
